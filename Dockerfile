@@ -11,14 +11,14 @@ RUN apk add --no-cache git jq curl
 #    mv rcon-${RCON_VERSION}-amd64_linux/rcon /usr/local/bin/ && \
 #    rm -rf rcon-${RCON_VERSION}-amd64_linux*
 
-#ARG ICECON_VERSION="v1.0.0"
+ARG ICECON_VERSION="v1.0.0"
 
-#RUN wget https://github.com/icedream/icecon/releases/download/${ICECON_VERSION}/icecon_linux_i386 && \
-    #mv icecon_linux_i386 /usr/local/bin/icecon && \
-    #chmod +x /usr/local/bin/icecon
+RUN wget https://github.com/icedream/icecon/releases/download/${ICECON_VERSION}/icecon_linux_i386 && \
+    mv icecon_linux_i386 /usr/local/bin/icecon && \
+    chmod +x /usr/local/bin/icecon
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
-#COPY entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
-#ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

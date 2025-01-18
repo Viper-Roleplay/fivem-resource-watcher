@@ -55,18 +55,24 @@ else
     echo "Diff between ${GITHUB_EVENT_BEFORE} and ${GITHUB_SHA}"
 fi
 
+echo "DIFF: $DIFF"
+
 resources_to_restart=
 
 IFS=$'\n'
 for changed in $DIFF; do
+    echo "Processing changed file: $changed"
     changed=${changed#??}
     if beginswith "${RESOURCES_FOLDER}" "${changed}"; then
         filtered=${changed#${RESOURCES_FOLDER}/} # Remove the resources folder prefix
         filtered=${filtered%%/*} # Remove filename and get the folder which corresponds to the resource name
+        echo "Filtered resource: $filtered"
         resources_to_restart="$(append_if_not_exists "$filtered" "$resources_to_restart")"
     fi
 done
 unset IFS
+
+echo "Resources to restart: $resources_to_restart"
 
 if [ -z "$resources_to_restart" ]; then
     echo "Nothing to restart"

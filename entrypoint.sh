@@ -71,9 +71,14 @@ for changed in $DIFF; do
     echo "Processing changed file: $changed"
     changed=${changed#??}
     echo "Trimmed changed file: $changed"
-    filtered=${changed%%/*} # Remove filename and get the folder which corresponds to the resource name
-    echo "Filtered resource: $filtered"
-    resources_to_restart="$(append_if_not_exists "$filtered" "$resources_to_restart")"
+    if beginswith "${RESOURCES_FOLDER}/" "${changed}"; then
+        filtered=${changed#${RESOURCES_FOLDER}/} # Remove the resources folder prefix
+        filtered=${filtered%%/*} # Remove filename and get the folder which corresponds to the resource name
+        echo "Filtered resource: $filtered"
+        resources_to_restart="$(append_if_not_exists "$filtered" "$resources_to_restart")"
+    else
+        echo "File $changed does not begin with ${RESOURCES_FOLDER}"
+    fi
 done
 unset IFS
 

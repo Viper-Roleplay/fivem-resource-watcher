@@ -61,7 +61,7 @@ IFS=$'\n'
 for changed in $DIFF; do
     changed=${changed#??}
     if beginswith "${RESOURCES_FOLDER}" "${changed}"; then
-        filtered=${changed##*]/} # Remove subfolders
+        filtered=${changed#${RESOURCES_FOLDER}/} # Remove the resources folder prefix
         filtered=${filtered%%/*} # Remove filename and get the folder which corresponds to the resource name
         resources_to_restart="$(append_if_not_exists "$filtered" "$resources_to_restart")"
     fi
@@ -82,7 +82,8 @@ else
                 echo "Ignoring restart of the resource ${resource}"
             else
                 echo "Restarting ${resource}"
-                icecon_command "ensure ${resource}"
+                icecon_command "stop ${resource}"
+                icecon_command "start ${resource}"
             fi
         done
     else

@@ -50,6 +50,9 @@ git config --global --add safe.directory /github/workspace
 
 echo "RESOURCES_FOLDER: $RESOURCES_FOLDER"
 
+REPO_NAME=$(basename "$GITHUB_REPOSITORY")
+echo "REPO_NAME: $REPO_NAME"
+
 if [ ${GITHUB_BASE_REF} ]; then
     # Pull Request
     git fetch origin ${GITHUB_BASE_REF} --depth=1
@@ -64,23 +67,7 @@ fi
 
 echo "DIFF: $DIFF"
 
-resources_to_restart=
-
-IFS=$'\n'
-for changed in $DIFF; do
-    echo "Processing changed file: $changed"
-    changed=${changed#??}
-    echo "Trimmed changed file: $changed"
-    if beginswith "${RESOURCES_FOLDER}/" "${changed}"; then
-        filtered=${changed#${RESOURCES_FOLDER}/} # Remove the resources folder prefix
-        filtered=${filtered%%/*} # Remove filename and get the folder which corresponds to the resource name
-        echo "Filtered resource: $filtered"
-        resources_to_restart="$(append_if_not_exists "$filtered" "$resources_to_restart")"
-    else
-        echo "File $changed does not begin with ${RESOURCES_FOLDER}"
-    fi
-done
-unset IFS
+resources_to_restart=$REPO_NAME
 
 echo "Resources to restart: $resources_to_restart"
 

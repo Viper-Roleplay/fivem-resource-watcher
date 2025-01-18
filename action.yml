@@ -32,6 +32,11 @@ inputs:
     required: false
     default: ""
     type: string
+  alwaysRestartServer:
+    description: "Whether to always restart the server"
+    required: false
+    default: "false"
+    type: boolean
 
 runs:
   using: "docker"

@@ -83,9 +83,11 @@ else
     if [ "$ALWAYS_RESTART_SERVER" = true ] then
         echo "Will restart the whole server due to resource being set like this"
         icecon_command "quit"
-    else
+    else [ "$RESTART_INDIVIDUAL_RESOURCES" = true ]; then
         echo "Will restart individual resource"
         echo "Restarting ${resources_to_restart}"
         icecon_command "ensure ${resources_to_restart}"
+    else
+        echo "Not restarting anything, as set in the action"
     fi
 fi

@@ -33,9 +33,14 @@ icecon_command() {
 }
 
 get_player_count() {
-    response=$(curl -s "${SERVER_IP}:${SERVER_PORT}/players.json")
-    player_count=$(echo "$response" | jq 'length')
-    echo "$player_count"
+    response=$(curl -s --max-time 10 "${SERVER_IP}:${SERVER_PORT}/players.json")
+    if [ $? -ne 0 ]; then
+        echo "Failed to fetch player count"
+        echo "1" # Default to 0 players if the request fails
+    else
+        player_count=$(echo "$response" | jq 'length')
+        echo "$player_count"
+    fi
 }
 
 RESTART_INDIVIDUAL_RESOURCES=$1

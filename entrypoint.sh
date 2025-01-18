@@ -50,6 +50,7 @@ RCON_PASSWORD=$4
 RESOURCES_FOLDER=$5
 RESTART_SERVER_WHEN_0_PLAYERS=$6
 IGNORED_RESOURCES=$7
+ALWAYS_RESTART_SERVER=$8
 
 git config --global --add safe.directory /github/workspace
 
@@ -79,23 +80,12 @@ echo "Resources to restart: $resources_to_restart"
 if [ -z "$resources_to_restart" ]; then
     echo "Nothing to restart"
 else
-    player_count=$(get_player_count)
-    if [ "$RESTART_SERVER_WHEN_0_PLAYERS" = true ] && [ "$player_count" -eq 0 ]; then
-        echo "Will restart the whole server due to 0 players"
+    if [ "$ALWAYS_RESTART_SERVER" = true ] then
+        echo "Will restart the whole server due to resource being set like this"
         icecon_command "quit"
-    elif [ "$RESTART_INDIVIDUAL_RESOURCES" = true ]; then
-        echo "Will restart individual resources"
-        for resource in $resources_to_restart; do
-            if exists_in_array "${resource}" "${IGNORED_RESOURCES}"; then
-                echo "Ignoring restart of the resource ${resource}"
-            else
-                echo "Restarting ${resource}"
-                icecon_command "stop ${resource}"
-                icecon_command "start ${resource}"
-            fi
-        done
     else
-        echo "Will restart the whole server"
-        icecon_command "quit"
+        echo "Will restart individual resource"
+        echo "Restarting ${resources_to_restart}"
+        icecon_command "ensure ${resources_to_restart}"
     fi
 fi
